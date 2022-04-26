@@ -12,9 +12,19 @@ cd ${0%/*} || exit 1  # Run from this directory
 # The first line of this file tells Ubunutu to run the shell, I think.
 # The second line sets the working directory
 ###############################
+# set up the cases
 
 cp -r ./clamp_14_01/0_orig ./clamp_14_01/0
 cp -r ./clamp_14_02/0_orig ./clamp_14_02/0
+
+runApplication blockMesh -case ./clamp_14_01
+runApplication blockMesh -case ./clamp_14_02
+runApplication topoSet -case ./clamp_14_01
+runApplication topoSet -case ./clamp_14_02
+runApplication setFields -case ./clamp_14_02
+
+###############################
+# first loop of the paired cases
 
 runApplication pimpleFoam -case ./clamp_14_01
 
@@ -32,10 +42,13 @@ rm ./log.mapFields
 rm ./log.pimpleFoam
 rm ./log.clampPimpleFoam
 
+###############################
+# enter the loop proper
+
 loopi=2
 
 # Start loop
-while [ $loopi -le 24 ]                  # Number of loops = hours / 4, 96 = day
+while [ $loopi -le 96 ]                  # Number of loops = hours / 4, 96 = day
 do
 
   # rename ./clamp_14_01/A + 90 to ./clamp_14_01/A + 900
